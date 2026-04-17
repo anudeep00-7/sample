@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            background-color: #0a0a0a;
+            color: #FFD700;
+            font-family: monospace;
+            width: 320px;
+            margin: 0;
+            padding: 16px;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        #userInfo {
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Update button container styles */
+        .button-container {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+            padding: 16px;
+            box-sizing: border-box;
+            background-color: #0a0a0a;
+            border-radius: 8px;
+        }
+
+        /* New style for the uninstall button */
+        .uninstall-button {
+            position: relative;
+            background-color: #1a1a1a;
+            color: #FFD700;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+            width: 100%;
+            cursor: pointer;
+            font-family: monospace;
+            z-index: 1;
+        }
+
+        .uninstall-button::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            bottom: -2px;
+            left: -2px;
+            background: linear-gradient(45deg, #ff4444, #ff6b6b, #ff8787);
+            border-radius: 9px;
+            z-index: -1;
+            transition: opacity 0.3s ease;
+            opacity: 0.5;
+        }
+
+        .uninstall-button::after {
+            content: '';
+            position: absolute;
+            inset: 1px;
+            background: black;
+            border-radius: 7px;
+            z-index: -1;
+        }
+
+        .uninstall-button:hover::before {
+            opacity: 1;
+            filter: blur(2px);
+        }
+
+        .uninstall-button:hover {
+            transform: scale(1.02);
+        }
+        .info-message {
+            background: linear-gradient(45deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1), rgba(236, 72, 153, 0.1));
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .info-message .main-message {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .info-message a {
+            color: #3b82f6;
+            text-decoration: none;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .info-message a:hover {
+            color: #8b5cf6;
+            text-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+        }
+
+        .important-note {
+            color: #ec4899;
+            font-weight: bold;
+            margin-top: 8px;
+            font-size: 0.75rem;
+            text-align: center;
+            padding: 0 8px;
+        }
+        .shortcuts-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .shortcuts-list li {
+            margin-bottom: 10px;
+            line-height: 1.4;
+            padding-left: 5px;
+            border-left: 2px solid rgba(139, 92, 246, 0.3);
+            padding-bottom: 5px;
+        }
+
+        .shortcut-key {
+            display: inline-block;
+            background: linear-gradient(45deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-right: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .shortcut-description {
+            display: inline;
+            vertical-align: middle;
+        }
+
+        .shortcuts-category {
+            margin-top: 16px;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: white;
+            text-align: left;
+            padding-bottom: 4px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .shortcuts-container {
+            padding: 12px 15px;
+            background: linear-gradient(45deg, rgba(59, 130, 246, 0.05), rgba(139, 92, 246, 0.05));
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 12px;
+            text-align: left;
+        }
+
+        .shortcuts-header {
+            text-align: center;
+            margin-bottom: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: white;
+        }
+        
+        /* Updated Toggle Switch Styles */
+        .toggle-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 12px;
+            background: linear-gradient(45deg, rgba(59, 130, 246, 0.05), rgba(139, 92, 246, 0.05));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .toggle-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 52px;
+            height: 28px;
+            margin-left: 12px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+            pointer-events: none;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(26, 26, 26, 0.8);
+            transition: all 0.4s ease;
+            border-radius: 28px;
+            border: 1px solid #FFD700;
+            overflow: hidden;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            transition: all 0.4s ease;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+        }
+
+        input:checked + .toggle-slider {
+            background-color: rgba(255, 215, 0, 0.3);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+            background: linear-gradient(45deg, #FFA500, #FFD700);
+        }
+
+        .toggle-label {
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #FFD700;
+        }
+
+        .toggle-warning {
+            font-size: 0.75rem;
+            color: #FFA500;
+            margin-top: 8px;
+            padding: 8px;
+            border-radius: 8px;
+            background-color: rgba(26, 26, 26, 0.8);
+            border: 1px solid #FFA500;
+        }
+
+        .toggle-success {
+            font-size: 0.75rem;
+            color: #FFD700;
+            margin-top: 4px;
+            padding: 8px;
+            border-radius: 8px;
+            background-color: rgba(26, 26, 26, 0.8);
+            border: 1px solid #FFD700;
+        }
+
+        .toggle-info {
+            font-size: 0.75rem;
+            color: #FFD700;
+            margin-top: 4px;
+            padding: 8px;
+            border-radius: 8px;
+            background-color: rgba(26, 26, 26, 0.8);
+            border: 1px solid #FFD700;
+        }
+
+        .opacity-button {
+            background-color: #1a1a1a;
+            color: #FFD700;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid #FFD700;
+            cursor: pointer;
+            font-family: monospace;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .opacity-button:hover {
+            background-color: #FFD700;
+            color: #000000;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+        }
+
+        .flex {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .gap-4 {
+            gap: 16px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .relative {
+            position: relative;
+            width: 100%;
+        }
+
+        .absolute {
+            position: absolute;
+        }
+
+        .rounded-lg {
+            border-radius: 8px;
+        }
+
+        .bg-black {
+            background-color: #0a0a0a;
+        }
+
+        .text-sm {
+            font-size: 0.875rem;
+        }
+
+        .mb-4 {
+            margin-bottom: 16px;
+        }
+
+        .mb-6 {
+            margin-bottom: 24px;
+        }
+
+        .text-white {
+            color: #FFD700;
+        }
+
+        /* Form styles */
+        #loginForm {
+            width: 100%;
+        }
+
+        .glow-input {
+            width: 100%;
+            box-sizing: border-box;
+            background-color: #1a1a1a;
+            border: 1px solid #FFD700;
+            border-radius: 4px;
+            padding: 8px 12px;
+            font-size: 0.875rem;
+            color: #FFD700;
+            transition: all 0.3s ease;
+        }
+
+        .glow-input:focus {
+            outline: none;
+            border-color: #FFA500;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+        }
+
+        .glow-button {
+            position: relative;
+            background-color: #1a1a1a;
+            color: #FFD700;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+            width: 100%;
+            cursor: pointer;
+            font-family: monospace;
+            font-weight: bold;
+            z-index: 1;
+        }
+
+        .glow-button::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            bottom: -2px;
+            left: -2px;
+            background: linear-gradient(45deg, #FFD700, #FFA500, #FFD700);
+            border-radius: 9px;
+            z-index: -1;
+            transition: opacity 0.3s ease;
+            opacity: 0.8;
+        }
+
+        .glow-button::after {
+            content: '';
+            position: absolute;
+            inset: 1px;
+            background: #0a0a0a;
+            border-radius: 7px;
+            z-index: -1;
+        }
+
+        .glow-button:hover::before {
+            opacity: 1;
+            filter: blur(2px);
+        }
+
+        .glow-button:hover {
+            transform: scale(1.02);
+        }
+
+        #statusMessage, #error {
+            font-size: 0.875rem;
+            text-align: center;
+            width: 100%;
+        }
+
+        .error-message {
+            color: red;
+        }
+
+        #userInfo {
+            width: 100%;
+            text-align: center; /* Center align user info */
+        }
+
+        .form-container {
+            background-color: black;
+            padding: 16px;
+            border-radius: 8px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Glow effect for username and shortcuts */
+        .glow {
+            text-shadow: 0 0 5px rgba(59, 130, 246, 0.9), 0 0 10px rgba(139, 92, 246, 0.7), 0 0 15px rgba(236, 72, 153, 0.5);
+        }
+
+        /* Added styles for thick labels */
+        .thick-label {
+            font-weight: bold; /* Increased thickness */
+            font-size: large;
+        }
+
+        /* Align shortcuts to the left */
+        #shortcuts {
+            text-align: left; /* Align to the left */
+        }
+
+        .portal-shortcuts {
+            margin-top: 16px;
+            padding: 12px;
+            background: linear-gradient(45deg, rgba(59, 130, 246, 0.05), rgba(139, 92, 246, 0.05));
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .hot-feature {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 8px;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        .tag-version {
+            background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+            color: white;
+        }
+
+        .tag-mcq {
+            background: linear-gradient(45deg, #f59e0b, #f97316);
+            color: white;
+        }
+
+        .tag-coding {
+            background: linear-gradient(45deg, #10b981, #059669);
+            color: white;
+        }
+
+        .tag-stealth {
+            background: linear-gradient(45deg, #dc2626, #ef4444);
+            color: white;
+        }
+
+        .tag-old {
+            background: linear-gradient(45deg, #6b7280, #4b5563);
+            color: white;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+
+        .status-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        /* Removed stealth indicator styles */
+
+        /* New styles for tab navigation */
+        .tabs-container {
+            width: 100%;
+            margin-bottom: 16px;
+        }
+
+        .tab-nav {
+            display: flex;
+            width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 16px;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-family: monospace;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab-button.active {
+            background-color: transparent;
+            color: white;
+        }
+
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899);
+            box-shadow: 0 0 8px rgba(139, 92, 246, 0.8);
+        }
+
+        .tab-button:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+
+        .tab-content {
+            display: none;
+            width: 100%;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .welcome-header {
+            font-size: 1.2rem;
+            margin-bottom: 16px;
+            text-align: center;
+            background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- OTP Authentication Screen -->
+    <div id="otpScreen" class="flex gap-4">
+        <div class="info-message">
+            <p class="main-message">🔒 Enter Authentication Code</p>
+            <p style="font-size: 0.85rem; margin-top: 8px; color: #3b82f6;">
+                🔑 Check the OTP on our website
+            </p>
+        </div>
+        
+        <!-- Visit Site Button -->
+        <a href="https://www.batm4n.tech/" target="_blank" style="text-decoration: none; width: 100%;">
+            <button class="glow-button thick-label" style="margin-bottom: 16px;">
+                🌐 Visit Site to Get OTP
+            </button>
+        </a>
+        
+        <div class="form-container">
+            <form id="otpForm">
+                <div class="mb-4">
+                    <label for="otpInput" class="thick-label text-white">Password:</label>
+                    <input 
+                        type="password" 
+                        id="otpInput" 
+                        class="glow-input" 
+                        placeholder="Enter password"
+                        required
+                        autocomplete="off"
+                    />
+                </div>
+                <button type="submit" class="glow-button thick-label">
+                    Authenticate
+                </button>
+                <div id="otpError" class="error-message" style="margin-top: 12px;"></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="mainContent" class="flex gap-4 hidden">
+        <div class="info-message">
+            <p class="main-message">🦇 Batman ExamShield Active - The Dark Knight Protects Your Exams 🦇</p>
+        </div>
+
+        <!-- Visit Site Button -->
+        <a href="https://www.batm4n.tech/" target="_blank" style="text-decoration: none; width: 100%;">
+            <button class="glow-button thick-label" style="margin-bottom: 16px;">
+                🌐 Visit Site
+            </button>
+        </a>
+
+        <!-- Status Message - removed stealth indicator -->
+        <div class="status-container">
+            <div id="statusMessage" class="text-sm glow"></div>
+        </div>
+        
+        <!-- Login Form - REMOVED (Login bypassed) -->
+
+        <!-- Logged-in content with tabs -->
+        <div id="loggedInContent" class="hidden">
+            <div class="welcome-header">Welcome to Batman ExamShield</div>
+            
+            <!-- Tab Navigation -->
+            <div class="tabs-container">
+                <div class="tab-nav">
+                    <button class="tab-button active" data-tab="shortcuts-tab">Shortcuts</button>
+                    <button class="tab-button" data-tab="options-tab">Options</button>
+                </div>
+                
+                <!-- Tab Contents -->
+                <div id="shortcuts-tab" class="tab-content active">
+                    <div class="shortcuts-container">                        
+                        <div class="shortcuts-category">Universal Shortcuts</div>
+                        <ul class="shortcuts-list">
+                            <li>
+                                <span class="shortcut-key">Alt + Shift + Z</span>
+                                <span class="shortcut-description">Search Coding Answers Using AI</span>
+                            </li>
+                            <li>
+                                <span class="shortcut-key">Alt + Shift + X</span>
+                                <span class="shortcut-description">Solve MCQs By Selecting Text Using AI</span>
+                            </li>
+                            <li>
+                                <span class="shortcut-key">Alt + C</span>
+                                <span class="shortcut-description">Toggle Chatbot Overlay</span>
+                            </li>
+                            <li>
+                                <span class="shortcut-key">Ctrl + V</span>
+                                <span class="shortcut-description">Paste Content Even When Restricted</span>
+                            </li>
+                        </ul>
+                        
+                        <div class="shortcuts-category">Examly/Iamneo Portal Shortcuts</div>
+                        <ul class="shortcuts-list">
+                            <li>
+                                <span class="shortcut-key">Alt + Shift + Q</span>
+                                <span class="shortcut-description">Answer Neo Questions with 100% Accuracy</span>
+                                <div>
+                                    <span class="hot-feature tag-version">V1.2</span>
+                                    <span class="hot-feature tag-mcq">MCQ</span>
+                                    <span class="hot-feature tag-coding">CODING</span>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="shortcut-key">Alt + Shift + T</span>
+                                <span class="shortcut-description">Type Neo Coding Answers Automatically</span>
+                                <div>
+                                    <span class="hot-feature tag-stealth">STEALTH</span>
+                                    <span class="hot-feature tag-coding">CODING</span>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="shortcut-key">Alt + Shift + A</span>
+                                <span class="shortcut-description">Search Neo Answers Using AI</span>
+                                <div>
+                                    <span class="hot-feature tag-old">BACKUP</span>
+                                </div>
+                            </li>
+                        </ul>
+                        
+                        <div class="shortcuts-category">NPTEL Portal Shortcuts</div>
+                        <ul class="shortcuts-list">
+                            <li>
+                                <span class="shortcut-key">Alt + Shift + N</span>
+                                <span class="shortcut-description">Solve NPTEL MCQs</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div id="options-tab" class="tab-content">
+                    <!-- Ultra Stealth Mode Toggle -->
+                    <div class="toggle-container mb-4">
+                        <div class="toggle-header">
+                            <span class="toggle-label">Ultra Stealth Mode</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="ultraStealthModeTab">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="toggle-warning">
+                            Disables popup and hides chatbot (still accessible via Alt+C)
+                        </div>
+                        <div class="ultra-toggle-success hidden">
+                            Ultra stealth mode enabled
+                        </div>
+                    </div>
+                    
+                    <!-- Toast Opacity Toggle -->
+                    <div class="toggle-container mb-4">
+                        <div class="toggle-header">
+                            <span class="toggle-label">Toast Notification Opacity</span>
+                            <button id="toastOpacityToggle" class="opacity-button">
+                                <span id="opacityLevel">High</span>
+                            </button>
+                        </div>
+                        <div class="toggle-info">
+                            Shortcut: Alt + O
+                        </div>
+                    </div>
+                    
+                    <!-- User Buttons -->
+                    <div class="button-container">
+                        <button 
+                            id="logoutButton"
+                            class="glow-button thick-label"
+                        >
+                            Logout
+                        </button>
+                        <button 
+                            id="uninstallButton"
+                            class="uninstall-button thick-label"
+                        >
+                            Uninstall
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Old sections (hidden or removed) -->
+        <div id="shortcuts" class="hidden"></div>        
+        <div id="userInfo" class="hidden"></div>
+        
+        <!-- Error Message -->
+        <div id="error" class="error-message"></div>
+    </div>
+    <script src="popup.js"></script>
+</body>
+</html>
